@@ -1,0 +1,8 @@
+# app installers are distributed via GitHub Releases, not committed
+# (they also exceed GitHub's 100 MB per-file limit)
+downloads/
+
+# local / tooling
+.vercel/
+.DS_Store
+node_modules/

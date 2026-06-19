@@ -1,0 +1,532 @@
+/* Space Age — rounded sci-fi wordmark font for the big WebGL words.
+   Free for personal use (see assets/fonts/space-age-LICENSE.txt). */
+@font-face {
+  font-family: "Space Age";
+  src: url("../assets/fonts/space-age.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --bg: #050505;
+  --fg: #ffffff;
+  --ease: cubic-bezier(0.19, 0.91, 0.36, 0.99);
+  --font: "IBM Plex Mono", monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-weight: 300;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------- loader */
+
+.loader {
+  align-items: center;
+  background: var(--bg);
+  display: flex;
+  height: 100dvh;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  top: 0;
+  transition: opacity 1.2s var(--ease), visibility 0s linear 1.2s;
+  width: 100%;
+  z-index: 999999;
+}
+
+.loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader__wrap {
+  position: relative;
+  text-align: center;
+}
+
+.loader__logo {
+  animation: logo-pulse 2.4s ease-in-out infinite;
+  display: block;
+  margin: 0 auto 1.5rem;
+  transition: opacity 0.5s var(--ease);
+}
+
+.loader.is-ready .loader__logo {
+  opacity: 0;
+}
+
+@keyframes logo-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.loader__label {
+  display: block;
+  font-size: 0.75rem;
+  font-style: normal;
+  letter-spacing: 0.15em;
+  opacity: 0.6;
+  text-transform: uppercase;
+  transition: opacity 0.5s var(--ease);
+}
+
+.loader.is-ready .loader__label {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader__enter {
+  color: var(--fg);
+  display: inline-block;
+  font-size: 0.875rem;
+  left: 50%;
+  letter-spacing: 0.3em;
+  opacity: 0;
+  padding: 1rem 2rem;
+  pointer-events: none;
+  position: absolute;
+  text-decoration: none;
+  text-transform: uppercase;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.92);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), letter-spacing 0.8s var(--ease);
+}
+
+.loader.is-ready .loader__enter {
+  opacity: 1;
+  pointer-events: all;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.loader__enter:hover {
+  letter-spacing: 0.45em;
+}
+
+.loader__bar {
+  background: var(--fg);
+  bottom: 0;
+  height: 1px;
+  left: 0;
+  opacity: 0.5;
+  position: absolute;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.4s var(--ease);
+  width: 100%;
+}
+
+/* ---------------------------------- canvas */
+
+.canvas {
+  height: 100dvh;
+  left: 0;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  transition: opacity 2s var(--ease);
+  width: 100%;
+  z-index: 1;
+}
+
+body.is-entered .canvas {
+  opacity: 1;
+}
+
+/* ---------------------------------- header */
+
+.header {
+  left: 0;
+  padding: 1rem;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  transform: translate3d(0, -100%, 0);
+  transition: transform 1s var(--ease) 0.4s;
+  width: 100%;
+  z-index: 99999;
+}
+
+body.is-entered .header {
+  transform: translate3d(0, 0, 0);
+}
+
+.header__inner {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header__logo {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.header__lnk {
+  align-items: center;
+  color: var(--fg);
+  display: inline-flex;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 300;
+  letter-spacing: 0.056rem;
+  line-height: 1;
+  padding: 1rem 0;
+  pointer-events: all;
+  text-decoration: none;
+}
+
+@media (min-width: 768px) {
+  .header__lnk {
+    font-size: 1rem;
+  }
+}
+
+.header__cta {
+  border: 1px solid currentColor;
+  border-radius: 2rem;
+  color: var(--fg);
+  display: inline-block;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.5rem 0.55rem;
+  pointer-events: all;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.5s var(--ease);
+}
+
+.header__cta:hover {
+  background: var(--fg);
+  color: #000;
+}
+
+/* ---------------------------------- scroll track */
+
+main {
+  position: relative;
+  z-index: 2;
+}
+
+.steps {
+  pointer-events: none;
+}
+
+.step {
+  height: 100dvh;
+  width: 100vw;
+}
+
+/* ---------------------------------- captions */
+
+.captions {
+  height: 100dvh;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.caption {
+  opacity: 0;
+  position: absolute;
+  will-change: opacity, transform;
+}
+
+.caption--hero {
+  left: 50%;
+  text-align: center;
+  top: 62%;
+  transform: translateX(-50%);
+  width: 100%;
+}
+
+.caption__title {
+  display: none; /* the big word lives in WebGL; kept for SEO/a11y */
+}
+
+.caption--hero .caption__text {
+  font-size: 0.875rem;
+  letter-spacing: 0.2em;
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+.caption__sub {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.25em;
+  margin-top: 0.75rem;
+  opacity: 0.55;
+}
+
+.caption--left {
+  bottom: 18%;
+  left: 1.5rem;
+}
+
+.caption--right {
+  bottom: 18%;
+  right: 1.5rem;
+  text-align: right;
+}
+
+@media (min-width: 992px) {
+  .caption--left { left: 4rem; }
+  .caption--right { right: 4rem; }
+}
+
+.caption__index {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+  text-transform: uppercase;
+}
+
+.caption__text {
+  font-size: 0.9375rem;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+@media (max-width: 767.98px) {
+  .caption__text { font-size: 0.8125rem; }
+}
+
+.caption--outro {
+  left: 50%;
+  text-align: center;
+  top: 70%; /* the particle eclipse forms in the upper half of the frame */
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+
+.caption--outro .caption__text {
+  font-size: 1.125rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+}
+
+.caption__brand {
+  display: block;
+  font-family: "Space Age", var(--font);
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  margin-bottom: 1.25rem;
+  opacity: 0.85;
+  text-transform: lowercase; /* lowercase slots hold the rounded logo glyphs */
+}
+
+.downloads {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  pointer-events: none; /* only live once the outro caption is on screen */
+}
+
+/* the buttons become interactive only when their caption is the active one */
+.caption.is-active .downloads {
+  pointer-events: all;
+}
+
+@media (max-width: 767.98px) {
+  .downloads {
+    align-items: center;
+    flex-direction: column;
+  }
+}
+
+.downloads__btn {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 2rem;
+  box-shadow: 0 0 28px rgba(255, 196, 92, 0.16), inset 0 0 12px rgba(255, 255, 255, 0.05);
+  color: var(--fg);
+  display: inline-block;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  min-width: 12rem;
+  padding: 1rem 1.75rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.5s var(--ease);
+}
+
+.downloads__btn:hover {
+  background: var(--fg);
+  border-color: var(--fg);
+  box-shadow: 0 0 36px rgba(255, 196, 92, 0.4);
+  color: #000;
+  transform: translateY(-2px);
+}
+
+.downloads__os {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.25em;
+  margin-bottom: 0.3rem;
+  opacity: 0.75;
+}
+
+.caption__mail {
+  color: var(--fg);
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  margin-top: 2rem;
+  opacity: 0.5;
+  pointer-events: none;
+  text-decoration: underline;
+  text-transform: uppercase;
+  text-underline-offset: 0.3em;
+  transition: opacity 0.5s var(--ease);
+}
+
+.caption.is-active .caption__mail {
+  pointer-events: all;
+}
+
+.caption__mail:hover {
+  opacity: 1;
+}
+
+/* ---------------------------------- footer */
+
+.footer {
+  bottom: 0;
+  font-size: 0.75rem;
+  left: 0;
+  padding: 1rem;
+  position: fixed;
+  transform: translate3d(0, 100%, 0);
+  transition: transform 1s var(--ease) 0.6s;
+  width: 100%;
+  z-index: 99;
+}
+
+body.is-entered .footer {
+  transform: translate3d(0, 0, 0);
+}
+
+.footer__inner {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer__social {
+  display: flex;
+  list-style: none;
+  pointer-events: all;
+}
+
+.footer__social li {
+  margin: 0 0 0 1rem;
+}
+
+@media (min-width: 992px) {
+  .footer__social li {
+    margin: 0 0 0 2.5rem;
+  }
+}
+
+.footer__social li:first-child {
+  margin: 0;
+}
+
+.footer__social-lnk {
+  color: var(--fg);
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 1rem 0;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.5s var(--ease);
+}
+
+.footer__social-lnk:hover {
+  opacity: 0.5;
+}
+
+.footer__audio-toggle {
+  appearance: none;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--fg);
+  cursor: pointer;
+  display: inline-flex;
+  height: 2.5rem;
+  justify-content: center;
+  padding: 0;
+  pointer-events: all;
+  transition: all 0.5s var(--ease);
+  width: 2.5rem;
+}
+
+.footer__audio-toggle:hover {
+  opacity: 0.5;
+}
+
+.footer__audio-toggle:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 0.25rem;
+}
+
+.footer__audio-toggle.is-muted {
+  opacity: 0.62;
+}
+
+.footer__audio-icon {
+  display: block;
+  fill: none;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.55;
+}
+
+/* ---------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .loader,
+  .header,
+  .footer,
+  .canvas {
+    transition: none;
+  }
+}

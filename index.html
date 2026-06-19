@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+  <title>Orbis — The Local-first AI Design Tool</title>
+  <meta name="description" content="Orbis is a local-first AI design tool. Design interactive web and mobile apps from a prompt, clone the feel of any site you love, then ship journey maps and dev-ready handoff specs — all on your machine.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Loading gate -->
+  <div class="loader">
+    <div class="loader__wrap">
+      <img class="loader__logo" src="assets/logo.svg" alt="" width="48" height="48">
+      <i class="loader__label js-loader-label">loading <span class="js-loader-pct">0</span>%</i>
+      <a class="loader__enter js-enter" href="javascript:void(0);" data-hover>enter</a>
+    </div>
+    <span class="loader__bar js-loader-bar"></span>
+  </div>
+
+  <!-- WebGL canvas -->
+  <div class="canvas js-canvas"></div>
+
+  <!-- Fixed header -->
+  <header class="header js-header">
+    <div class="header__inner">
+      <a class="header__lnk" href="javascript:void(0);" data-hover>
+        <img class="header__logo" src="assets/logo.svg" alt="" width="22" height="22">
+        <span>Orbis</span>
+      </a>
+      <a class="header__cta js-download" href="javascript:void(0);" data-hover>Download</a>
+    </div>
+  </header>
+
+  <!-- Scroll track -->
+  <main class="js-main">
+    <div class="steps js-steps">
+      <div class="step"></div><div class="step"></div><div class="step"></div>
+      <div class="step"></div><div class="step"></div><div class="step"></div>
+      <div class="step"></div><div class="step"></div><div class="step"></div>
+      <div class="step"></div><div class="step"></div><div class="step"></div>
+      <div class="step"></div><div class="step"></div><div class="step"></div>
+      <div class="step"></div><div class="step"></div><div class="step"></div>
+    </div>
+  </main>
+
+  <!-- Chapter captions (DOM overlay) -->
+  <div class="captions" aria-hidden="false">
+    <div class="caption caption--hero js-caption" data-from="0.00" data-to="0.10">
+      <h1 class="caption__title">Orbis</h1>
+      <p class="caption__text">The local-first AI design tool.<br><span class="caption__sub">Type what you imagine. Watch it become a design.</span></p>
+    </div>
+    <div class="caption caption--left js-caption" data-from="0.16" data-to="0.29">
+      <span class="caption__index">01 / Imagine</span>
+      <p class="caption__text">Describe what you want in plain words —<br>or point Orbis at any website you love.<br>It reads the design and makes it yours.</p>
+    </div>
+    <div class="caption caption--right js-caption" data-from="0.31" data-to="0.41">
+      <span class="caption__index">140+ design systems built in</span>
+      <p class="caption__text">Stripe &middot; Linear &middot; Vercel &middot; Notion<br>Airbnb &middot; Apple &middot; Spotify &middot; Figma<br>&hellip;or one inferred from your own brand.</p>
+    </div>
+    <div class="caption caption--right js-caption" data-from="0.44" data-to="0.56">
+      <span class="caption__index">02 / Create</span>
+      <p class="caption__text">Interactive prototypes for web &amp; mobile —<br>real React + Tailwind, running live<br>in a sandboxed preview. Edit anything inline.</p>
+    </div>
+    <div class="caption caption--left js-caption" data-from="0.58" data-to="0.67">
+      <span class="caption__index">One prompt away</span>
+      <p class="caption__text">Landing pages &middot; Dashboards &middot; Mobile apps<br>Decks &middot; Templates &middot; Design systems</p>
+    </div>
+    <div class="caption caption--left js-caption" data-from="0.70" data-to="0.79">
+      <span class="caption__index">03 / Ship</span>
+      <p class="caption__text">Your screens become the story — journey maps<br>read from the real product, and handoff specs<br>with tokens &amp; redlines. Measured, never estimated.</p>
+    </div>
+    <div class="caption caption--right js-caption" data-from="0.81" data-to="0.89">
+      <span class="caption__index">Local-first</span>
+      <p class="caption__text">Runs on your machine — macOS &amp; Windows.<br>Your designs stay with you. No cloud required.</p>
+    </div>
+    <div class="caption caption--outro js-caption" data-from="0.92" data-to="1.08">
+      <span class="caption__brand">Orbis</span>
+      <p class="caption__text">Type it. Design it. Ship it.</p>
+      <div class="downloads">
+        <a class="downloads__btn" href="https://github.com/Josedesign006/orbis-website/releases/download/v1.0.0/Orbis-mac-arm64.dmg" data-hover>
+          <span class="downloads__os">macOS</span>Apple Silicon
+        </a>
+        <a class="downloads__btn" href="https://github.com/Josedesign006/orbis-website/releases/download/v1.0.0/Orbis-mac-x64.dmg" data-hover>
+          <span class="downloads__os">macOS</span>Intel
+        </a>
+        <a class="downloads__btn" href="https://github.com/Josedesign006/orbis-website/releases/download/v1.0.0/Orbis-win-setup.exe" data-hover>
+          <span class="downloads__os">Windows</span>Installer
+        </a>
+      </div>
+      <a class="caption__mail" href="mailto:ramsarjal.ux@gmail.com" data-hover>or just say hello</a>
+    </div>
+  </div>
+
+  <!-- Fixed footer -->
+  <footer class="footer js-footer">
+    <div class="footer__inner">
+      <ul class="footer__social">
+        <li><a class="footer__social-lnk" target="_blank" rel="noopener" href="https://github.com" data-hover>Github</a></li>
+        <li><a class="footer__social-lnk" target="_blank" rel="noopener" href="https://www.linkedin.com" data-hover>Linkedin</a></li>
+        <li><a class="footer__social-lnk" target="_blank" rel="noopener" href="https://twitter.com" data-hover>Twitter</a></li>
+      </ul>
+      <button class="footer__audio-toggle js-audio-toggle" type="button" aria-label="Disable sound" aria-pressed="true" data-hover>
+        <svg class="footer__audio-icon" width="24" height="24" viewBox="0 0 10 10" aria-hidden="true">
+          <polyline class="js-audio-wave" points="1,5 2.14,4.08 3.29,3.55 4.43,3.82 5.57,4.8 6.71,5.9 7.86,6.45 9,6.08"></polyline>
+        </svg>
+      </button>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
