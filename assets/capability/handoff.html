@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Handoff Spec — 9read. iOS reader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#F1E9D9; --paper-3:#FBF6EC; --ink:#16130F; --ink-soft:#4A443B;
+    --ink-faint:#6e675b; --red:#E03A28; --border:#16121024; --rule:#1612100f;
+    --display:'Playfair Display',Georgia,serif; --body:'Archivo',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+    -webkit-font-smoothing:antialiased;line-height:1.5;}
+  .wrap{max-width:980px;margin:0 auto;padding:56px 28px 120px;}
+
+  /* header */
+  header.spec{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:8px;}
+  .kick{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--red);margin:0 0 12px;}
+  h1.title{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,52px);
+    line-height:1.0;letter-spacing:-.015em;margin:0 0 18px;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 10px;font-family:var(--mono);font-size:12px;}
+  .meta span{background:var(--paper-3);border:1px solid var(--border);border-radius:6px;padding:5px 9px;}
+  .meta b{color:var(--red);font-weight:600;}
+
+  /* sections */
+  section{margin-top:52px;scroll-margin-top:20px;}
+  h2{font-family:var(--display);font-weight:700;font-size:25px;letter-spacing:-.01em;
+    margin:0 0 4px;display:flex;align-items:baseline;gap:12px;}
+  h2 .ix{font-family:var(--mono);font-size:13px;color:var(--red);font-weight:500;}
+  .lede{color:var(--ink-soft);font-size:14.5px;margin:0 0 20px;max-width:64ch;}
+  h3{font-family:var(--display);font-weight:700;font-size:17px;margin:28px 0 10px;}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 4px;}
+  th{font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ink-faint);text-align:left;
+    border-bottom:1.5px solid var(--ink);padding:0 12px 7px 0;vertical-align:bottom;}
+  td{border-bottom:1px solid var(--rule);padding:9px 12px 9px 0;vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  code,.m{font-family:var(--mono);font-size:12px;background:var(--paper-3);
+    border:1px solid var(--border);border-radius:4px;padding:1px 5px;white-space:nowrap;}
+  td .m{white-space:normal;}
+  .sw{display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid var(--border);
+    vertical-align:-2px;margin-right:7px;}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    padding:2px 7px;border-radius:999px;border:1px solid var(--border);white-space:nowrap;}
+  .tag.raw{color:var(--red);border-color:#e03a2840;background:#e03a280d;}
+  .tag.tok{color:#2c7a4b;border-color:#2c7a4b33;background:#2c7a4b0d;}
+  .tag.un{color:var(--ink-faint);}
+  .miss{color:var(--red);}
+  .ns{color:var(--ink-faint);font-style:italic;}
+
+  /* specimen */
+  .spec-rows td:first-child{font-family:var(--display);color:var(--ink);}
+
+  /* callout */
+  .gap{background:var(--paper-3);border:1px solid var(--border);
+    border-radius:8px;padding:18px 20px;margin-top:18px;}
+  .gap ul{margin:0;padding-left:18px;}
+  .gap li{margin:7px 0;font-size:13.5px;}
+  .gap li::marker{color:var(--red);}
+
+  /* comp card */
+  .comp{border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-top:18px;background:var(--paper-3);}
+  .comp h3{margin-top:0;display:flex;align-items:baseline;gap:10px;font-size:19px;}
+  .comp .role{font-family:var(--body);font-weight:500;font-size:13px;color:var(--ink-faint);}
+  .anat{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);background:var(--paper);
+    border:1px solid var(--border);border-radius:6px;padding:9px 11px;margin:2px 0 12px;line-height:1.6;}
+
+  /* toc nav */
+  nav.toc{position:sticky;top:0;background:var(--paper);padding:14px 0;margin-bottom:-30px;
+    display:flex;flex-wrap:wrap;gap:6px;font-family:var(--mono);font-size:11px;z-index:5;
+    border-bottom:1px solid var(--rule);}
+  nav.toc a{color:var(--ink-soft);text-decoration:none;padding:4px 8px;border-radius:5px;}
+  nav.toc a:hover{background:var(--paper-3);color:var(--ink);}
+  a{color:var(--red);}
+  :focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:4px;}
+  .foot{margin-top:60px;padding-top:20px;border-top:1px solid var(--rule);
+    font-family:var(--mono);font-size:11px;color:var(--ink-faint);}
+  @media (max-width:620px){.meta{font-size:11px}table{font-size:11.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="spec">
+    <p class="kick">Developer Handoff · Stage 9 — Handoff</p>
+    <h1 class="title">9read. — iOS reader</h1>
+    <div class="meta">
+      <span>SOURCE <b>9read-ios.html</b> (React SPA)</span>
+      <span>PLATFORM <b>react / web</b></span>
+      <span>SYSTEM <b>index-design.md</b></span>
+      <span>DATE <b>2026-06-19</b></span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#color">Colour</a><a href="#type">Type</a><a href="#space">Spacing</a>
+    <a href="#radii">Radii · Shadow · Motion</a><a href="#layout">Layout</a>
+    <a href="#components">Components</a><a href="#assets">Assets</a><a href="#gaps">Token gaps</a>
+  </nav>
+
+  <p class="lede" style="margin-top:46px">
+    Every value below is transcribed verbatim from <code>src/styles/theme.css</code>,
+    <code>src/styles/index.css</code> and the per-component inline styles. Nothing is rounded or
+    estimated. <code>index.html</code> is a 22-line shell that mounts <code>src/main.tsx</code>;
+    the design lives entirely in the stylesheet token layer and the component files.
+  </p>
+
+  <!-- COLOUR -->
+  <section id="color">
+    <h2><span class="ix">01</span> Colour</h2>
+    <p class="lede">Tokenised in <code>:root</code> (theme.css). The reader's three reading themes
+      and a few accent uses bypass the tokens with raw hex — flagged below.</p>
+    <table>
+      <thead><tr><th>Token / value</th><th>Hex</th><th>Role</th><th>Source</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><code>--paper</code></td><td><span class="sw" style="background:#F1E9D9"></span><code>#F1E9D9</code></td><td>page / phone bg</td><td>theme.css</td><td><span class="tag tok">token</span></td></tr>
+        <tr><td><code>--paper-2</code></td><td><span class="sw" style="background:#E7DCC6"></span><code>#E7DCC6</code></td><td>progress track</td><td>theme.css</td><td><span class="tag tok">token</span></td></tr>
+        <tr><td><code>--paper-3</code></td><td><span class="sw" style="background:#FBF6EC"></span><code>#FBF6EC</code></td><td>card / sheet</td><td>theme.css</td><td><span class="tag tok">token</span></td></tr>
+        <tr><td><code>--ink</code></td><td><span class="sw" style="background:#16130F"></span><code>#16130F</code></td><td>text + line art</td><td>theme.css</td><td><span class="tag tok">token</span></td></tr>
+        <tr><td><code>--ink-soft</code></td><td><span class="sw" style="background:#4A443B"></span><code>#4A443B</code></td><td>secondary text</td><td>theme.css</td><td><span class="tag tok">token</span></td></tr>
+        <tr><td><code>--ink-faint</code></td><td><span class="sw" style="background:#8A8275"></span><code>#8A8275</code></td><td>meta / captions</td><td>theme.css</td><td><span class="tag tok">token</span></td></tr>
+        <tr><td><code>--red</code></td><td><span class="sw" style="background:#E03A28"></span><code>#E03A28</code></td><td>vermillion accent</td><td>theme.css</td><td><span class="tag tok">token</span></td></tr>
+        <tr><td><code>--red-deep</code></td><td><span class="sw" style="background:#C12C1D"></span><code>#C12C1D</code></td><td>pressed red</td><td>theme.css</td><td><span class="tag un">unused</span></td></tr>
+        <tr><td><code>--line</code></td><td><span class="sw" style="background:#16130F1a"></span><code>#1612100f</code></td><td>hairline 6%</td><td>theme.css</td><td><span class="tag un">unused</span></td></tr>
+        <tr><td><code>--border</code></td><td><span class="sw" style="background:#1612101a"></span><code>#1612101a</code></td><td>borders / dividers</td><td>theme.css</td><td><span class="tag tok">token</span></td></tr>
+        <tr><td><code>sepia</code> theme</td><td><span class="sw" style="background:#EAD9B8"></span><code>#EAD9B8</code> bg · <code>#3B2E1C</code> fg · <code>#5C4A30</code> · <code>#8A7350</code> · <code>#F2E6CC</code></td><td>reader sepia (5)</td><td>ReaderScreen</td><td><span class="tag raw">raw</span></td></tr>
+        <tr><td><code>night</code> theme</td><td><span class="sw" style="background:#171513"></span><code>#171513</code> bg · <code>#E9E0CE</code> fg · <code>#B8AE9B</code> · <code>#7E776A</code> · <code>#221F1B</code></td><td>reader night (5)</td><td>ReaderScreen</td><td><span class="tag raw">raw</span></td></tr>
+        <tr><td><code>#E03A28</code> literal</td><td><span class="sw" style="background:#E03A28"></span><code>#E03A28</code></td><td>range accent, theme-btn border, TBtn active</td><td>ReaderScreen ×3</td><td><span class="tag raw">raw</span></td></tr>
+        <tr><td><code>#1b1814</code></td><td><span class="sw" style="background:#1b1814"></span><code>#1b1814</code></td><td>desktop stage backdrop</td><td>index.css</td><td><span class="tag raw">raw</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TYPE -->
+  <section id="type">
+    <h2><span class="ix">02</span> Typography</h2>
+    <p class="lede">Three families. Display = Playfair (headlines, reader body), Body = Archivo
+      (UI, buttons, status bar), Mono = JetBrains (eyebrows, meta, page numbers). Reader sizes are
+      multiplied by a user <code>scale</code> of 0.85–1.3.</p>
+    <table><thead><tr><th>Family token</th><th>Stack</th></tr></thead><tbody>
+      <tr><td><code>--font-display</code></td><td><span class="m">'Playfair Display', 'Iowan Old Style', Georgia, serif</span></td></tr>
+      <tr><td><code>--font-body</code></td><td><span class="m">'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif</span></td></tr>
+      <tr><td><code>--font-mono</code></td><td><span class="m">'JetBrains Mono', ui-monospace, Menlo, monospace</span></td></tr>
+    </tbody></table>
+
+    <h3>Type scale in use (role → exact values)</h3>
+    <table class="spec-rows"><thead><tr><th>Role</th><th>Family</th><th>Size</th><th>Weight</th><th>Line-height</th><th>Tracking</th></tr></thead><tbody>
+      <tr><td>Reader title</td><td>display</td><td><code>36px×scale</code></td><td>800</td><td>1.04</td><td>-0.01em</td></tr>
+      <tr><td>Featured H1</td><td>display</td><td><code>34px</code></td><td>800</td><td>1.02</td><td>-0.01em</td></tr>
+      <tr><td>Detail H1</td><td>display</td><td><code>30px</code></td><td>800</td><td>1.06</td><td>-0.01em</td></tr>
+      <tr><td>Reader dropcap</td><td>display</td><td><code>58px×scale</code></td><td>800</td><td>0.78</td><td>—</td></tr>
+      <tr><td>Wordmark</td><td>display</td><td><code>22–24px</code></td><td>900</td><td>—</td><td>-0.02em</td></tr>
+      <tr><td>Section H2</td><td>display</td><td><code>19 / 20px</code></td><td>700</td><td>—</td><td>—</td></tr>
+      <tr><td>Reader lead</td><td>display</td><td><code>18px×scale</code></td><td>600</td><td>1.5</td><td>—</td></tr>
+      <tr><td>Reader body</td><td>display</td><td><code>17px×scale</code></td><td class="ns">inherits 400</td><td>1.72</td><td>—</td></tr>
+      <tr><td>Detail chapter title</td><td>display</td><td><code>17px</code></td><td>600</td><td>1.2</td><td>—</td></tr>
+      <tr><td>Detail lead</td><td>display</td><td><code>16.5px</code></td><td class="ns">inherits 400</td><td>1.62</td><td>—</td></tr>
+      <tr><td>Shelf title</td><td>display</td><td><code>16px</code></td><td>700</td><td>1.15</td><td>—</td></tr>
+      <tr><td>Chapter numeral</td><td>display italic</td><td><code>15px</code></td><td class="ns">inherits</td><td>—</td><td>—</td></tr>
+      <tr><td>Status bar</td><td>body</td><td><code>14px</code></td><td>700</td><td>—</td><td>0.02em</td></tr>
+      <tr><td>Read buttons / pill</td><td>body</td><td><code>14 / 15px</code></td><td>700</td><td>—</td><td>0.01em</td></tr>
+      <tr><td>Author / subtitle</td><td>body</td><td><code>15px</code></td><td class="ns">inherits 400</td><td>1.55</td><td>—</td></tr>
+      <tr><td>Shelf author</td><td>body</td><td><code>13px</code></td><td class="ns">inherits</td><td>—</td><td>—</td></tr>
+      <tr><td>Theme buttons</td><td>body</td><td><code>13px</code></td><td>700</td><td>—</td><td>caps</td></tr>
+      <tr><td>Eyebrow / kicker</td><td>mono</td><td><code>11px</code></td><td class="ns">inherits</td><td>—</td><td>0.14–0.18em</td></tr>
+      <tr><td>Vertical kicker</td><td>mono</td><td><code>11px</code></td><td class="ns">inherits</td><td>—</td><td>0.32em · vertical-rl</td></tr>
+      <tr><td>Meta / page nums</td><td>mono</td><td><code>10–12px</code></td><td class="ns">inherits</td><td>—</td><td>0.06–0.16em</td></tr>
+    </tbody></table>
+  </section>
+
+  <!-- SPACING -->
+  <section id="space">
+    <h2><span class="ix">03</span> Spacing</h2>
+    <div class="gap"><ul><li><b>No spacing token exists.</b> theme.css tokenises colour, type and
+      motion only — every padding / margin / gap is a raw inline px value in the component files.</li></ul></div>
+    <h3>Observed scale (deduped from all inline styles)</h3>
+    <p><code>2</code> <code>4</code> <code>6</code> <code>7</code> <code>8</code> <code>10</code>
+      <code>11</code> <code>12</code> <code>14</code> <code>15</code> <code>16</code> <code>18</code>
+      <code>20</code> <code>22</code> <code>24</code> <code>26</code> <code>28</code> <code>30</code>
+      <code>36</code> <code>40</code> <code>44</code> <code>48</code> <code>56</code> <code>64</code></p>
+    <p class="lede">A 2px-based even scale, <b>not</b> a strict 4/8pt grid — <code>6 · 10 · 14 · 18 · 22 · 26</code>
+      all appear. An engineer should normalise these to a named scale on build.</p>
+  </section>
+
+  <!-- RADII / SHADOW / MOTION -->
+  <section id="radii">
+    <h2><span class="ix">04</span> Radii · Shadow · Motion</h2>
+    <h3>Border-radius <span class="ns" style="font-family:var(--body);font-size:12px">(no token — raw px)</span></h3>
+    <table><thead><tr><th>Radius</th><th>Applied to</th></tr></thead><tbody>
+      <tr><td><code>2px</code></td><td>progress-bar track + fill</td></tr>
+      <tr><td><code>6px</code></td><td>shelf cover + spine, focus-ring, artwork clip rects</td></tr>
+      <tr><td><code>12px</code></td><td>icon buttons, theme-picker buttons, TBtn</td></tr>
+      <tr><td><code>14px</code></td><td>detail read button, reader artwork frame</td></tr>
+      <tr><td><code>16px</code></td><td>detail SeaSun frame</td></tr>
+      <tr><td><code>18px</code></td><td>reader type panel</td></tr>
+      <tr><td><code>22px</code></td><td>library featured card</td></tr>
+      <tr><td><code>44px</code></td><td>phone frame — <code>0</code> at ≤880px</td></tr>
+      <tr><td><code>999px</code></td><td>pills + badges</td></tr>
+    </tbody></table>
+
+    <h3>Box-shadow <span class="ns" style="font-family:var(--body);font-size:12px">(no token — raw)</span></h3>
+    <table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody>
+      <tr><td>phone</td><td><span class="m">0 2px 0 rgba(0,0,0,.04) inset, 0 40px 80px -30px rgba(0,0,0,.55), 0 12px 30px -10px rgba(0,0,0,.4)</span></td></tr>
+      <tr><td>shelf cover</td><td><span class="m">0 6px 14px -8px rgba(0,0,0,.5)</span></td></tr>
+      <tr><td>type panel</td><td><span class="m">0 18px 40px -16px rgba(0,0,0,.5)</span></td></tr>
+    </tbody></table>
+
+    <h3>Motion <span class="ns" style="font-family:var(--body);font-size:12px">(tokenised in theme.css + keyframes in index.css)</span></h3>
+    <table><thead><tr><th>Token / keyframe</th><th>Value</th><th>Used on</th></tr></thead><tbody>
+      <tr><td><code>--dur-instant</code></td><td><code>120ms</code></td><td>tap / pressable transform</td></tr>
+      <tr><td><code>--dur-base</code></td><td><code>220ms</code></td><td>screenIn, reader bg swap</td></tr>
+      <tr><td><code>--dur-slow</code></td><td><code>340ms</code></td><td>reveal / fadeUp</td></tr>
+      <tr><td><code>--ease-out</code></td><td><span class="m">cubic-bezier(0.2, 0, 0, 1)</span></td><td>taps, screenIn, bg</td></tr>
+      <tr><td><code>--ease-out-expo</code></td><td><span class="m">cubic-bezier(0.16, 1, 0.3, 1)</span></td><td>reveal, draw</td></tr>
+      <tr><td><code>.reveal</code> (fadeUp)</td><td>opacity 0→1, translateY 20→0</td><td>type panel entrance</td></tr>
+      <tr><td><code>.screen-in &gt; *</code></td><td>opacity 0→1, translateY 8 + scale .995→1</td><td>screen mount</td></tr>
+      <tr><td><code>.tap:active</code></td><td><code>scale(0.97)</code></td><td>all tappables</td></tr>
+      <tr><td>reduced-motion</td><td>disables reveal/screenIn/draw + active scale</td><td><code>@media</code> present ✓</td></tr>
+    </tbody></table>
+  </section>
+
+  <!-- LAYOUT -->
+  <section id="layout">
+    <h2><span class="ix">05</span> Measurements &amp; layout</h2>
+    <table><thead><tr><th>Region</th><th>Rule (as written)</th><th>Static / driven</th></tr></thead><tbody>
+      <tr><td>Stage shell</td><td><span class="m">grid; place-items:center; padding:48px 24px</span></td><td>static</td></tr>
+      <tr><td>Phone frame</td><td><span class="m">402 × 874px; max-height:calc(100vh - 64px); radius 44px; flex column</span></td><td>static</td></tr>
+      <tr><td>Phone @≤880px</td><td><span class="m">100vw × 100vh; radius 0; no shadow; brand hidden</span></td><td>static</td></tr>
+      <tr><td>Status bar</td><td><span class="m">height 52px; padding 0 26px 8px; flex space-between, align flex-end</span></td><td>static</td></tr>
+      <tr><td>Scroll screen</td><td><span class="m">flex 1 1 auto; overflow-y auto; scrollbar hidden</span></td><td class="ns">content-driven</td></tr>
+      <tr><td>Featured card</td><td><span class="m">margin 14px 20px 0; radius 22; 1px --border; bg --paper-3</span></td><td class="ns">height content-driven</td></tr>
+      <tr><td>Type panel</td><td><span class="m">absolute; left/right 16; bottom 84; radius 18; padding 16px 18px</span></td><td>static offsets</td></tr>
+      <tr><td>Bottom nav</td><td><span class="m">flex space-around; padding 12px 14px 26px; 4 × TBtn</span></td><td>static</td></tr>
+    </tbody></table>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section id="components">
+    <h2><span class="ix">06</span> Component catalog</h2>
+    <p class="lede">8 components. Props derived from the actual TSX signatures; states from the CSS /
+      handlers actually present. Missing states an engineer should add are flagged <span class="miss">in red</span>.</p>
+
+    <div class="comp">
+      <h3>App <span class="role">stage shell + router</span></h3>
+      <div class="anat">.stage &gt; .stage__brand (desktop) + .phone (keyed on route → re-mounts to retrigger entrance)</div>
+      <table><thead><tr><th>State</th><th>Detail</th></tr></thead><tbody>
+        <tr><td><code>route</code></td><td>'library' | 'detail' | 'reader' — persisted to <code>localStorage['9read.route']</code></td></tr>
+        <tr><td><code>saved</code></td><td>boolean, lifted; shared with DetailScreen bookmark</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="comp">
+      <h3>StatusBar <span class="role">iOS status bar · 9:41 + glyphs</span></h3>
+      <div class="anat">.statusbar (52px) &gt; time span + .statusbar__icons (3 inline SVGs)</div>
+      <table><thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Effect</th></tr></thead><tbody>
+        <tr><td><code>dark</code></td><td>boolean</td><td><code>false</code></td><td>flips glyph + text between <code>#16130F</code> / <code>#F1E9D9</code></td></tr>
+      </tbody></table>
+      <p style="font-size:12.5px;margin:8px 0 0">States: light (default) · dark. <span class="miss">No missing states.</span></p>
+    </div>
+
+    <div class="comp">
+      <h3>LibraryScreen <span class="role">home — featured + shelf</span></h3>
+      <div class="anat">StatusBar + .screen &gt; header (wordmark + Search/Menu) + featured card + 'On your shelf' list</div>
+      <table><thead><tr><th>Element</th><th>Box model</th><th>States present</th><th>Missing</th></tr></thead><tbody>
+        <tr><td>iconBtn</td><td><span class="m">40×40 · radius 12 · transparent</span></td><td>:active · :focus-visible (global)</td><td class="miss">:hover · 40px &lt; 44 hit-target</td></tr>
+        <tr><td>Featured card</td><td><span class="m">margin 14/20/0 · radius 22 · 1px border · --paper-3</span></td><td>role=button · Enter/Space · :active</td><td class="miss">:hover · distinct :focus</td></tr>
+        <tr><td>readBtn (pill)</td><td><span class="m">pad 11/18 · radius 999 · --red / --paper-3</span></td><td>—</td><td class="miss">is a &lt;span&gt;, not focusable</td></tr>
+        <tr><td>Shelf row</td><td><span class="m">flex gap 14 · pad 10/0 · border-bottom (not last)</span></td><td>:active · progress shown when pct&gt;0 · 'New' tag --red</td><td class="miss">:hover · no onClick wired (inert)</td></tr>
+      </tbody></table>
+      <p style="font-size:12.5px;margin:8px 0 0"><b>Prop:</b> <code>onOpen: () =&gt; void</code></p>
+    </div>
+
+    <div class="comp">
+      <h3>DetailScreen <span class="role">book detail + table of contents</span></h3>
+      <div class="anat">StatusBar + .screen &gt; header (Back/Bookmark) + hero (vertical kicker + SeaSun + prologue) + ToC list + primary read button</div>
+      <table><thead><tr><th>Prop</th><th>Type</th></tr></thead><tbody>
+        <tr><td><code>onBack</code></td><td>() =&gt; void</td></tr>
+        <tr><td><code>onRead</code></td><td>(i: number) =&gt; void — rows pass index; footer passes 1</td></tr>
+        <tr><td><code>saved</code></td><td>boolean</td></tr>
+        <tr><td><code>onToggleSave</code></td><td>() =&gt; void</td></tr>
+      </tbody></table>
+      <table style="margin-top:14px"><thead><tr><th>Element</th><th>Box model</th><th>States</th><th>Missing</th></tr></thead><tbody>
+        <tr><td>iconBtn</td><td><span class="m">44×44 · radius 12</span></td><td>:active · :focus-visible</td><td class="miss">:hover</td></tr>
+        <tr><td>Bookmark</td><td>—</td><td>unsaved (outline/--ink) · saved (filled/--red)</td><td>—</td></tr>
+        <tr><td>ToC row</td><td><span class="m">flex baseline · gap 14 · pad 15/2 · border-bottom</span></td><td>role=button · Enter/Space · :active</td><td class="miss">:hover · distinct :focus</td></tr>
+        <tr><td>Read button</td><td><span class="m">full-width · --ink/--paper · pad 15 · radius 14</span></td><td>:active</td><td class="miss">:hover · :disabled</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="comp">
+      <h3>ReaderScreen <span class="role">reading view + theme/type controls</span></h3>
+      <div class="anat">StatusBar(dark when night) + .screen (chapter head + art + body w/ dropcap) + type panel (conditional) + bottom nav (4 × TBtn)</div>
+      <table><thead><tr><th>State</th><th>Detail</th></tr></thead><tbody>
+        <tr><td><code>theme</code></td><td>'paper' | 'sepia' | 'night' — THEMES map of 5 colours each</td></tr>
+        <tr><td><code>scale</code></td><td>number 0.85–1.3 step 0.05 — multiplies every reader font-size</td></tr>
+        <tr><td><code>saved</code></td><td>boolean — <span class="miss">local, NOT synced with App/Detail saved</span></td></tr>
+        <tr><td><code>panel</code></td><td>null | 'type'</td></tr>
+      </tbody></table>
+      <table style="margin-top:14px"><thead><tr><th>Element</th><th>Box / props</th><th>States</th><th>Missing</th></tr></thead><tbody>
+        <tr><td>Type panel</td><td><span class="m">absolute · radius 18 · pad 16/18 · .reveal in</span></td><td>open / closed</td><td>—</td></tr>
+        <tr><td>Theme button</td><td><span class="m">44px tall · radius 12</span></td><td>unselected (1px) · selected (2px <code>#E03A28</code>)</td><td class="miss">:hover</td></tr>
+        <tr><td>TBtn</td><td><span class="m">56×48 · radius 12 · props: children,label,active,onClick</span></td><td>default · active (--red + aria-pressed) · :active</td><td class="miss">:hover</td></tr>
+        <tr><td>Range input</td><td><span class="m">min .85 max 1.3 step .05 · accentColor #E03A28</span></td><td>:focus-visible (global)</td><td class="miss">no reset; no labelled value read-out</td></tr>
+      </tbody></table>
+      <p style="font-size:12.5px;margin:8px 0 0"><b>Prop:</b> <code>onContents: () =&gt; void</code></p>
+    </div>
+
+    <div class="comp">
+      <h3>Icons <span class="role">inline SVG set · currentColor stroke</span></h3>
+      <div class="anat">Menu · Back · Search · Bookmark · Brightness · TextSize · List · Play · Clock · Settings</div>
+      <table><thead><tr><th>Prop</th><th>Type</th><th>Default</th></tr></thead><tbody>
+        <tr><td><code>size</code></td><td>number</td><td>24</td></tr>
+        <tr><td><code>strokeWidth</code></td><td>number</td><td>1.9 <span class="ns">(TextSize is fill-based)</span></td></tr>
+        <tr><td><code>filled</code></td><td>boolean</td><td>false <span class="ns">(Bookmark only)</span></td></tr>
+        <tr><td><code>className</code></td><td>string</td><td>""</td></tr>
+      </tbody></table>
+      <p style="font-size:12.5px;margin:8px 0 0" class="miss">Play · Clock · Settings are exported but unused in the three screens.</p>
+    </div>
+
+    <div class="comp">
+      <h3>Artwork <span class="role">editorial woodblock SVGs — signature flourish</span></h3>
+      <div class="anat">RisingSun (360×300) · SeaSun (360×220) · PalmScene (360×200) · SpineMotif (64×84, kind%3)</div>
+      <table><thead><tr><th>Prop</th><th>Type</th><th>Default</th></tr></thead><tbody>
+        <tr><td><code>kind</code></td><td>number</td><td>0 <span class="ns">(SpineMotif — kind%3 → 1 of 3 motifs)</span></td></tr>
+        <tr><td><code>className</code></td><td>string</td><td>""</td></tr>
+      </tbody></table>
+      <p style="font-size:12.5px;margin:8px 0 0">Palette hardcoded as <code>INK/RED/PAPER</code> constants (duplicate token values) — intentional for self-contained SVG.</p>
+    </div>
+  </section>
+
+  <!-- ASSETS -->
+  <section id="assets">
+    <h2><span class="ix">07</span> Assets &amp; dependencies</h2>
+    <table><thead><tr><th>Asset</th><th>Detail</th><th>Source</th></tr></thead><tbody>
+      <tr><td>Playfair Display</td><td>500,600,700,800,900 + italic 500,600</td><td>Google Fonts</td></tr>
+      <tr><td>Archivo</td><td>400,500,600,700,800,900</td><td>Google Fonts</td></tr>
+      <tr><td>JetBrains Mono</td><td>400,500,600</td><td>Google Fonts</td></tr>
+      <tr><td>Icons</td><td>10 inline SVGs — no icon-font dependency</td><td>Icons.tsx</td></tr>
+      <tr><td>Illustration</td><td>4 inline SVG sets — no raster</td><td>Artwork.tsx</td></tr>
+      <tr><td>React 18</td><td>react, react-dom/client</td><td>esm</td></tr>
+      <tr><td>Tailwind CDN</td><td><span class="miss">loaded but unused</span> — screens use inline styles + CSS vars</td><td>index.html</td></tr>
+      <tr><td><code>mqdhbc76-…webp</code></td><td>present in folder but <b>not referenced</b> by the screen</td><td>project root</td></tr>
+    </tbody></table>
+  </section>
+
+  <!-- GAPS -->
+  <section id="gaps">
+    <h2><span class="ix">08</span> Token-adoption gaps</h2>
+    <p class="lede">The most actionable cleanup list — raw values that bypass the system, in priority order.</p>
+    <div class="gap"><ul>
+      <li><b>No spacing / radius / shadow tokens.</b> theme.css tokenises colour, type and motion only — every box-model value is a raw inline px. Biggest systemisation opportunity.</li>
+      <li><b>ReaderScreen THEMES hardcodes 15 hex values</b>, including a <code>paper</code> theme that duplicates <code>--paper</code> / <code>--ink</code> / etc. instead of referencing the token layer.</li>
+      <li><b><code>#E03A28</code> appears literally in 3 spots</b> (range accentColor, theme-button border, TBtn active) — should be <code>var(--red)</code>.</li>
+      <li><b><code>--red-deep</code> and <code>--line</code> are defined but never used</b> — wire them up or remove.</li>
+      <li><b><code>#1b1814</code> backdrop is a raw literal</b> in index.css.</li>
+      <li><b>Tailwind CDN is loaded but unused</b> — drop it, or adopt it; carrying both is dead weight.</li>
+      <li><b>Hit targets inconsistent</b> — Library icon buttons 40×40 (below 44px); Detail uses 44×44. Normalise to ≥44.</li>
+      <li><b>No <code>:hover</code> states anywhere</b> — acceptable for touch, but this is a <code>react/web</code> handoff, so add hover affordances for pointer devices.</li>
+    </ul></div>
+  </section>
+
+  <p class="foot">Read-only spec · transcribed from 9read-ios.html source on 2026-06-19 · machine-readable pair: 9read-ios-handoff.json</p>
+
+</div>
+</body>
+</html>

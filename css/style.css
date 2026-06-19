@@ -226,6 +226,52 @@ body.is-entered .header {
   color: #000;
 }
 
+.header__nav {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease);
+}
+
+/* while a page is open, the floating × is the only close affordance —
+   clear the nav out of its way and de-clutter the bar */
+body.panel-open .header__nav {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .header__nav { gap: 1.75rem; }
+}
+
+.header__nav-lnk {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--fg);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  opacity: 0.7;
+  padding: 0.75rem 0.5rem;
+  pointer-events: all;
+  text-transform: uppercase;
+  transition: opacity 0.4s var(--ease);
+}
+
+.header__nav-lnk:hover {
+  opacity: 1;
+}
+
+@media (max-width: 479.98px) {
+  .header__nav { gap: 0.4rem; }
+  .header__nav-lnk { font-size: 0.625rem; letter-spacing: 0.04em; padding: 0.75rem 0.2rem; }
+  .header__cta { font-size: 0.6875rem; padding: 0.45rem 0.85rem 0.5rem; }
+}
+
 /* ---------------------------------- scroll track */
 
 main {
@@ -518,6 +564,493 @@ body.is-entered .footer {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 0.55;
+}
+
+/* ---------------------------------- overlay panels */
+
+.panel {
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  visibility: hidden;
+  z-index: 9000;
+  transition: opacity 0.7s var(--ease), visibility 0s linear 0.7s;
+}
+
+.panel.is-open {
+  opacity: 1;
+  pointer-events: all;
+  visibility: visible;
+  transition: opacity 0.7s var(--ease);
+}
+
+/* dark cosmic veil — the live WebGL scene drifts through it so the page
+   never feels static; a slow aurora wanders on top for extra depth */
+.panel__veil {
+  inset: 0;
+  overflow: hidden;
+  position: absolute;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(255, 196, 92, 0.12), transparent 55%),
+    radial-gradient(100% 80% at 50% 120%, rgba(198, 74, 16, 0.10), transparent 60%),
+    linear-gradient(rgba(5, 5, 5, 0.58), rgba(5, 5, 5, 0.80));
+  backdrop-filter: blur(7px) saturate(125%);
+  -webkit-backdrop-filter: blur(7px) saturate(125%);
+}
+
+/* drifting aurora — also parallaxes with the mouse via --ax/--ay */
+.panel__veil::after {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  background:
+    radial-gradient(38% 48% at 30% 38%, rgba(255, 196, 92, 0.12), transparent 60%),
+    radial-gradient(44% 54% at 72% 66%, rgba(120, 96, 210, 0.10), transparent 62%),
+    radial-gradient(30% 40% at 55% 20%, rgba(198, 74, 16, 0.08), transparent 60%);
+  filter: blur(22px);
+  translate: var(--ax, 0) var(--ay, 0);
+  animation: panel-aurora 24s ease-in-out infinite alternate;
+  will-change: transform, translate;
+}
+
+@keyframes panel-aurora {
+  0%   { transform: translate3d(-3%, -2%, 0) scale(1.05) rotate(0deg); }
+  100% { transform: translate3d(4%, 3%, 0) scale(1.18) rotate(8deg); }
+}
+
+.panel__close {
+  appearance: none;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: var(--fg);
+  cursor: pointer;
+  display: inline-flex;
+  height: 2.75rem;
+  justify-content: center;
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  transition: all 0.4s var(--ease);
+  width: 2.75rem;
+  z-index: 2;
+}
+
+.panel__close:hover {
+  background: var(--fg);
+  color: #000;
+  transform: rotate(90deg);
+}
+
+.panel__scroll {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.panel__inner {
+  margin: 0 auto;
+  max-width: 1040px;
+  padding: 7rem 1.5rem 5rem;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease) 0.12s, transform 0.9s var(--ease) 0.12s;
+}
+
+.panel.is-open .panel__inner {
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 768px) {
+  .panel__inner { padding: 8.5rem 3rem 6rem; }
+}
+
+.panel__head {
+  margin-bottom: 3.5rem;
+  max-width: 36rem;
+  translate: var(--mx, 0) var(--my, 0); /* subtle mouse parallax, like the camera */
+  transition: translate 0.6s var(--ease);
+}
+
+/* ---- motion utilities (echo the home page's living feel) */
+
+/* scroll-reveal: rises + fades as it enters the panel's viewport */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s var(--ease), transform 1s var(--ease);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* staggered entrances within each group */
+.caps .cap:nth-child(1) { transition-delay: 0.04s; }
+.caps .cap:nth-child(2) { transition-delay: 0.12s; }
+.caps .cap:nth-child(3) { transition-delay: 0.20s; }
+.crew .creator:nth-child(2) { transition-delay: 0.12s; }
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.panel__eyebrow {
+  color: rgba(255, 196, 92, 0.85);
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.25em;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+.panel__title {
+  animation: float-soft 7s ease-in-out infinite;
+  font-family: "Space Age", var(--font);
+  font-size: clamp(1.7rem, 7.2vw, 5rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  margin-bottom: 1.75rem;
+  text-transform: lowercase; /* Space Age keeps its rounded glyphs in lowercase */
+}
+
+@media (max-width: 479.98px) {
+  .panel__title { letter-spacing: 0.01em; }
+}
+
+.panel__lead {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.85;
+}
+
+/* ---- capability cards (Mission) */
+
+.caps {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  list-style: none;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .caps { grid-template-columns: repeat(2, 1fr); }
+  .cap--wide { grid-column: 1 / -1; } /* video demos span full width */
+}
+
+/* the screen recordings are ~3:2 — closer ratio so little is cropped */
+.cap--wide .cap__media { aspect-ratio: 16 / 10; }
+
+.cap {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: border-color 0.5s var(--ease), transform 0.5s var(--ease);
+}
+
+.cap:hover {
+  border-color: rgba(255, 196, 92, 0.45);
+  transform: translateY(-3px);
+}
+
+.cap__media {
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.cap__media img,
+.cap__media video {
+  animation: kenburns 20s ease-in-out infinite alternate; /* always gently drifting */
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: filter 0.6s var(--ease);
+  width: 100%;
+}
+
+@keyframes kenburns {
+  0%   { transform: scale(1.03) translate(0, 0); }
+  100% { transform: scale(1.1) translate(-1.5%, -1.5%); }
+}
+
+.cap:hover .cap__media img,
+.cap:hover .cap__media video {
+  filter: brightness(1.08) saturate(1.05);
+}
+
+/* embedded, auto-scrolling HTML (e.g. the handoff spec) */
+.cap__media--frame { background: #f1e9d9; }
+
+.cap__media--frame iframe {
+  border: 0;
+  display: block;
+  height: 100%;
+  pointer-events: none; /* purely a playing preview — wheel scrolls the panel, not the doc */
+  width: 100%;
+}
+
+/* clone disclaimer — clear "this is a clone, not the real site" banner */
+.cap__disclaimer {
+  align-items: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background: rgba(5, 5, 5, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+  display: flex;
+  font-size: 0.625rem;
+  gap: 0.5rem;
+  justify-content: center;
+  left: 0;
+  letter-spacing: 0.14em;
+  padding: 0.55rem 1rem;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  text-transform: uppercase;
+  top: 0;
+  z-index: 2;
+}
+
+.cap__live-dot {
+  animation: live-pulse 1.8s ease-in-out infinite;
+  background: #ff5c3c;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 92, 60, 0.9);
+  flex: 0 0 auto;
+  height: 6px;
+  width: 6px;
+}
+
+/* "live demo" badge on the video card */
+.cap__live {
+  align-items: center;
+  background: rgba(5, 5, 5, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 2rem;
+  color: rgba(255, 255, 255, 0.92);
+  display: inline-flex;
+  font-size: 0.625rem;
+  gap: 0.45rem;
+  letter-spacing: 0.22em;
+  padding: 0.35rem 0.75rem 0.35rem 1.5rem;
+  position: absolute;
+  right: 0.9rem;
+  text-transform: uppercase;
+  top: 0.9rem;
+}
+
+/* pulsing dot before the badge label */
+.cap__live::before {
+  content: "";
+  background: #ff5c3c;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 92, 60, 0.9);
+  height: 6px;
+  left: 0.75rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  animation: live-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.cap__body {
+  padding: 1.5rem 1.5rem 1.75rem;
+}
+
+.cap__index {
+  color: rgba(255, 196, 92, 0.8);
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.cap__name {
+  font-size: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.6rem;
+}
+
+.cap__text {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+/* ---- feature chips */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.chip {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 2rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  padding: 0.5rem 1.1rem;
+  text-transform: uppercase;
+}
+
+/* ---- creator cards (Constellation) */
+
+.crew {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .crew { grid-template-columns: repeat(2, 1fr); }
+}
+
+.creator {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2.25rem 2rem;
+  transition: border-color 0.5s var(--ease), transform 0.5s var(--ease);
+}
+
+.creator:hover {
+  border-color: rgba(255, 196, 92, 0.45);
+  transform: translateY(-3px);
+}
+
+/* monogram inside an orbiting ring — echoes the eclipse motif */
+.creator__avatar {
+  animation: float-soft 6s ease-in-out infinite;
+  align-items: center;
+  border-radius: 50%;
+  display: inline-flex;
+  height: 4.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  width: 4.5rem;
+  background: radial-gradient(circle at 50% 38%, rgba(255, 196, 92, 0.22), rgba(5, 5, 5, 0.4) 70%);
+  box-shadow: 0 0 28px rgba(255, 196, 92, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.creator__avatar::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 196, 92, 0.35);
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  animation: orbit-spin 9s linear infinite;
+}
+
+@keyframes orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* real headshot fills the orbit ring (monogram is the fallback) */
+.creator__photo {
+  border-radius: 50%;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  position: absolute;
+  width: 100%;
+}
+
+.creator__avatar--photo {
+  background: #111;
+}
+
+.creator__mono {
+  font-family: "Space Age", var(--font);
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  opacity: 0.95;
+  text-transform: lowercase;
+}
+
+.creator__name {
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+.creator__role {
+  color: rgba(255, 196, 92, 0.85);
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  margin: 0.4rem 0 1.1rem;
+  text-transform: uppercase;
+}
+
+.creator__bio {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.9375rem;
+  font-weight: 300;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.creator__lnk {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+  transition: opacity 0.4s var(--ease);
+}
+
+.creator__lnk:hover { opacity: 0.6; }
+
+/* lock background while a panel is open */
+body.panel-open { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .creator__avatar::before,
+  .creator__avatar,
+  .panel__title,
+  .panel__veil::after,
+  .cap__media img,
+  .cap__media video,
+  .cap__live::before { animation: none; }
+  .panel, .panel__inner { transition: opacity 0.2s linear; }
+  .reveal { opacity: 1; transform: none; transition: none; }
 }
 
 /* ---------------------------------- reduced motion */

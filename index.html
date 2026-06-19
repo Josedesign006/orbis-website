@@ -38,11 +38,15 @@
   <!-- Fixed header -->
   <header class="header js-header">
     <div class="header__inner">
-      <a class="header__lnk" href="javascript:void(0);" data-hover>
+      <a class="header__lnk js-home" href="javascript:void(0);" data-hover>
         <img class="header__logo" src="assets/logo.svg" alt="" width="22" height="22">
         <span>Orbis</span>
       </a>
-      <a class="header__cta js-download" href="javascript:void(0);" data-hover>Download</a>
+      <nav class="header__nav">
+        <button class="header__nav-lnk js-open-panel" type="button" data-panel="mission" data-hover>Mission</button>
+        <button class="header__nav-lnk js-open-panel" type="button" data-panel="constellation" data-hover>Constellation</button>
+        <a class="header__cta js-download" href="javascript:void(0);" data-hover>Download</a>
+      </nav>
     </div>
   </header>
 
@@ -92,19 +96,168 @@
       <span class="caption__brand">Orbis</span>
       <p class="caption__text">Type it. Design it. Ship it.</p>
       <div class="downloads">
-        <a class="downloads__btn" href="https://github.com/Josedesign006/orbis-website/releases/download/v1.0.0/Orbis-mac-arm64.dmg" data-hover>
+        <a class="downloads__btn" href="https://github.com/Josedesign006/Orbis-packages/releases/download/v0.6.1/Orbis-macOS-AppleSilicon-arm64.dmg" data-hover>
           <span class="downloads__os">macOS</span>Apple Silicon
         </a>
-        <a class="downloads__btn" href="https://github.com/Josedesign006/orbis-website/releases/download/v1.0.0/Orbis-mac-x64.dmg" data-hover>
+        <a class="downloads__btn" href="https://github.com/Josedesign006/Orbis-packages/releases/download/v0.6.1/Orbis-macOS-Intel-x64.dmg" data-hover>
           <span class="downloads__os">macOS</span>Intel
         </a>
-        <a class="downloads__btn" href="https://github.com/Josedesign006/orbis-website/releases/download/v1.0.0/Orbis-win-setup.exe" data-hover>
+        <a class="downloads__btn" href="https://github.com/Josedesign006/Orbis-packages/releases/download/v0.6.1/Orbis-Windows-Setup-x64.exe" data-hover>
           <span class="downloads__os">Windows</span>Installer
         </a>
       </div>
       <a class="caption__mail" href="mailto:ramsarjal.ux@gmail.com" data-hover>or just say hello</a>
     </div>
   </div>
+
+  <!-- =============================================================
+       Overlay sections — cosmic "pages" that fade in over the canvas
+       ============================================================= -->
+
+  <!-- Mission — what Orbis does -->
+  <section class="panel js-panel" id="panel-mission" data-panel="mission" aria-hidden="true">
+    <div class="panel__veil"></div>
+    <button class="panel__close js-close-panel" type="button" aria-label="Close" data-hover>
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M5 5 L17 17 M17 5 L5 17" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </button>
+    <div class="panel__scroll" data-lenis-prevent>
+      <div class="panel__inner">
+        <header class="panel__head reveal">
+          <span class="panel__eyebrow">Mission · what Orbis does</span>
+          <h2 class="panel__title">mission</h2>
+          <p class="panel__lead">
+            Orbis is a local-first AI design tool. Type what you imagine — or point it at any
+            site you love — and watch it become a real, interactive design. Web and mobile,
+            running live on your machine. No cloud required.
+          </p>
+        </header>
+
+        <ul class="caps">
+          <li class="cap cap--wide reveal">
+            <figure class="cap__media cap__media--video">
+              <video class="js-panel-video" data-src="assets/capability/cap-demo.mp4" poster="assets/capability/cap-demo-poster.jpg" muted loop playsinline preload="none" width="1600" height="1000" aria-label="Orbis generating three FIFA World Cup 2026 homepage directions from one prompt, then previewing the result full-screen"></video>
+              <span class="cap__live">live demo</span>
+            </figure>
+            <div class="cap__body">
+              <span class="cap__index">Imagine &rarr; Create</span>
+              <h3 class="cap__name">From a prompt, watch it build</h3>
+              <p class="cap__text">Describe what you want and Orbis builds several complete, self-contained directions live — then previews any of them full-screen.</p>
+            </div>
+          </li>
+          <li class="cap cap--wide reveal">
+            <figure class="cap__media cap__media--frame" style="background:#fff">
+              <span class="cap__disclaimer"><span class="cap__live-dot"></span>Not the official Apple homepage — a live clone built by Orbis</span>
+              <iframe class="js-panel-frame" data-src="assets/capability/clone-apple.html" title="A live clone of apple.com rebuilt by Orbis as an editable prototype" loading="lazy" tabindex="-1"></iframe>
+            </figure>
+            <div class="cap__body">
+              <span class="cap__index">Imagine · Clone</span>
+              <h3 class="cap__name">Clone any webpage — then make it yours</h3>
+              <p class="cap__text">Point Orbis at any URL — here, apple.com — and it rebuilds the page as a real, editable prototype, not a screenshot. Keep modifying it like anything you made from scratch.</p>
+            </div>
+          </li>
+          <li class="cap reveal">
+            <figure class="cap__media">
+              <img src="assets/capability/cap-edit.jpg" alt="The Orbis inspector panel editing an element in a cloned page — typography, content and layer tree" loading="lazy" width="1600" height="1034">
+            </figure>
+            <div class="cap__body">
+              <span class="cap__index">Create · Edit</span>
+              <h3 class="cap__name">Edit anything in the frame</h3>
+              <p class="cap__text">Select any element — copy, color, image, type, spacing — and change it inline, or ask AI to restyle a whole section. Every layer stays real and editable, and updates in place.</p>
+            </div>
+          </li>
+          <li class="cap reveal">
+            <figure class="cap__media cap__media--frame" style="background:#0a0b0d">
+              <iframe class="js-panel-frame" data-src="assets/capability/design-md.html" title="A design.md design-system file generated by Orbis — palette, type, spacing, motion and components" loading="lazy" tabindex="-1"></iframe>
+              <span class="cap__live">auto-scroll</span>
+            </figure>
+            <div class="cap__body">
+              <span class="cap__index">Create · Design system</span>
+              <h3 class="cap__name">A design.md you can reuse</h3>
+              <p class="cap__text">Orbis distills the whole look — palette, type, spacing, motion, components — into a portable design.md. Drop it into any project and the agent builds to your system.</p>
+            </div>
+          </li>
+          <li class="cap cap--wide reveal">
+            <figure class="cap__media cap__media--video">
+              <video class="js-panel-video" data-src="assets/capability/cap-figma.mp4" poster="assets/capability/cap-figma-poster.jpg" muted loop playsinline preload="none" width="1600" height="1034" aria-label="Orbis converting rendered web frames into a fully editable Figma file with real layers and assets"></video>
+              <span class="cap__live">live demo</span>
+            </figure>
+            <div class="cap__body">
+              <span class="cap__index">Ship &rarr; Figma</span>
+              <h3 class="cap__name">Send it to Figma — fully editable</h3>
+              <p class="cap__text">One step converts your rendered web frames into a real Figma file: every layer, text style, component and asset intact and editable — not a flat screenshot. Plus journey maps and dev-ready handoff specs.</p>
+            </div>
+          </li>
+          <li class="cap cap--wide reveal">
+            <figure class="cap__media cap__media--frame">
+              <iframe class="js-panel-frame" data-src="assets/capability/handoff.html" title="A dev-ready handoff spec generated by Orbis for a 9read iOS reader screen — tokens, type scale, colour, spacing and component notes" loading="lazy" tabindex="-1"></iframe>
+              <span class="cap__live">auto-scroll</span>
+            </figure>
+            <div class="cap__body">
+              <span class="cap__index">Ship &middot; Handoff</span>
+              <h3 class="cap__name">A dev-ready spec for any screen</h3>
+              <p class="cap__text">Every screen comes with a complete handoff: design tokens, type scale, colour, spacing redlines and component notes — measured from the real design, never estimated.</p>
+            </div>
+          </li>
+        </ul>
+
+        <ul class="chips reveal">
+          <li class="chip">140+ design systems built in</li>
+          <li class="chip">Local-first · macOS &amp; Windows</li>
+          <li class="chip">Live React + Tailwind preview</li>
+          <li class="chip">Journey maps &amp; handoff specs</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Constellation — the people behind Orbis -->
+  <section class="panel js-panel" id="panel-constellation" data-panel="constellation" aria-hidden="true">
+    <div class="panel__veil"></div>
+    <button class="panel__close js-close-panel" type="button" aria-label="Close" data-hover>
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M5 5 L17 17 M17 5 L5 17" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </button>
+    <div class="panel__scroll" data-lenis-prevent>
+      <div class="panel__inner">
+        <header class="panel__head reveal">
+          <span class="panel__eyebrow">Constellation · the people behind Orbis</span>
+          <h2 class="panel__title">constellation</h2>
+          <p class="panel__lead">
+            Two people, one orbit. Orbis is built by a small team that cares about the
+            distance between an idea and a thing you can actually use.
+          </p>
+        </header>
+
+        <ul class="crew">
+          <li class="creator reveal">
+            <span class="creator__avatar" aria-hidden="true"><span class="creator__mono">R</span></span>
+            <div class="creator__body">
+              <h3 class="creator__name">Ram</h3>
+              <span class="creator__role">Design &amp; Product</span>
+              <p class="creator__bio">
+                Shapes how Orbis feels — the path from a blank prompt to a finished screen.
+                Lives in the details: motion, type, and the small moments that make software
+                feel alive.
+              </p>
+              <a class="creator__lnk" href="https://www.linkedin.com/in/ram-sarjal/" target="_blank" rel="noopener" data-hover>LinkedIn &#8599;</a>
+            </div>
+          </li>
+          <li class="creator reveal">
+            <span class="creator__avatar creator__avatar--photo" aria-hidden="true"><img class="creator__photo" src="assets/capability/cap-neil.jpg" alt="" width="200" height="200"></span>
+            <div class="creator__body">
+              <h3 class="creator__name">Neil</h3>
+              <span class="creator__role">Engineering</span>
+              <p class="creator__bio">
+                Builds the engine under the hood — the local-first runtime, the model
+                orchestration, and the sandbox that turns a prompt into running code on
+                your own machine.
+              </p>
+              <a class="creator__lnk" href="https://www.linkedin.com/in/neil-sarjal/" target="_blank" rel="noopener" data-hover>LinkedIn &#8599;</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
   <!-- Fixed footer -->
   <footer class="footer js-footer">

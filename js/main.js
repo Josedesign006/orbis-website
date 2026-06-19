@@ -1092,8 +1092,131 @@ audioToggle.addEventListener('click', () => {
   audioToggle.setAttribute('aria-label', muted ? 'Enable sound' : 'Disable sound');
 });
 
-// ---- header Download → glide down to the eclipse + download options
+// ---- overlay panels (Mission / Constellation) — cosmic "pages" over the canvas
+const panels = [...document.querySelectorAll('.js-panel')];
+const panelVideos = [...document.querySelectorAll('.js-panel-video')];
+const panelFrames = [...document.querySelectorAll('.js-panel-frame')];
+
+// gently auto-scroll any embedded HTML (e.g. the handoff spec) so it "plays"
+let frameRAF = null;
+function frameScrollStep() {
+  const open = panels.find((p) => p.classList.contains('is-open'));
+  if (!open) { frameRAF = null; return; }
+  const now = performance.now();
+  for (const f of open.querySelectorAll('.js-panel-frame')) {
+    try {
+      const el = f.contentDocument?.scrollingElement;
+      if (!el) continue;
+      const max = el.scrollHeight - el.clientHeight;
+      if (max <= 2) continue;
+      if (f._hold && now < f._hold) continue;           // dwell at the ends
+      f._hold = 0;
+      if (el.scrollTop >= max - 1) { el.scrollTop = 0; f._hold = now + 1100; continue; } // loop
+      el.scrollTop = Math.min(max, el.scrollTop + 0.5);
+    } catch (e) { /* iframe not ready */ }
+  }
+  frameRAF = requestAnimationFrame(frameScrollStep);
+}
+function startFrameScroll() {
+  if (frameRAF == null) frameRAF = requestAnimationFrame(frameScrollStep);
+}
+
+// reveal a panel's elements as they enter its scroll viewport (re-fires both ways)
+function revealVisible(panel) {
+  const h = window.innerHeight;
+  for (const el of panel.querySelectorAll('.reveal')) {
+    const r = el.getBoundingClientRect();
+    el.classList.toggle('is-in', r.top < h * 0.86 && r.bottom > h * 0.06);
+  }
+}
+panels.forEach((p) => {
+  p.querySelector('.panel__scroll').addEventListener('scroll', () => revealVisible(p), { passive: true });
+});
+
+// subtle mouse parallax on the open page — same idea as the camera's drift
+window.addEventListener('mousemove', (e) => {
+  const open = panels.find((p) => p.classList.contains('is-open'));
+  if (!open) return;
+  const x = e.clientX / window.innerWidth - 0.5;
+  const y = e.clientY / window.innerHeight - 0.5;
+  open.style.setProperty('--mx', `${(-x * 16).toFixed(1)}px`);
+  open.style.setProperty('--my', `${(-y * 12).toFixed(1)}px`);
+  open.style.setProperty('--ax', `${(x * 34).toFixed(1)}px`);
+  open.style.setProperty('--ay', `${(y * 26).toFixed(1)}px`);
+});
+
+function closePanels() {
+  let wasOpen = false;
+  for (const p of panels) {
+    if (p.classList.contains('is-open')) wasOpen = true;
+    p.classList.remove('is-open');
+    p.setAttribute('aria-hidden', 'true');
+  }
+  document.body.classList.remove('panel-open');
+  for (const v of panelVideos) if (!v.paused) v.pause();
+  if (frameRAF != null) { cancelAnimationFrame(frameRAF); frameRAF = null; }
+  // resume the scroll experience only once it's actually running
+  if (wasOpen && document.body.classList.contains('is-entered')) lenis.start();
+  return wasOpen;
+}
+
+function openPanel(name) {
+  const panel = panels.find((p) => p.dataset.panel === name);
+  if (!panel) return;
+  for (const p of panels) {
+    const on = p === panel;
+    p.classList.toggle('is-open', on);
+    p.setAttribute('aria-hidden', String(!on));
+  }
+  document.body.classList.add('panel-open');
+  lenis.stop(); // freeze the WebGL fly-through while a page is open
+  panel.querySelector('.panel__scroll').scrollTop = 0;
+  panel.querySelector('.js-close-panel')?.focus();
+
+  // replay the scroll-reveals from the top each time the page opens
+  for (const el of panel.querySelectorAll('.reveal')) el.classList.remove('is-in');
+  requestAnimationFrame(() => requestAnimationFrame(() => revealVisible(panel)));
+
+  // autoplay any looping demo videos in this page — loaded on demand
+  for (const v of panel.querySelectorAll('.js-panel-video')) {
+    if (!v.src && v.dataset.src) v.src = v.dataset.src;
+    v.play().catch(() => {});
+  }
+
+  // load + auto-scroll any embedded HTML demos (e.g. the handoff spec)
+  for (const f of panel.querySelectorAll('.js-panel-frame')) {
+    if (!f.src && f.dataset.src) {
+      f.addEventListener('load', () => {
+        try {
+          const d = f.contentDocument;
+          const s = d.createElement('style');
+          s.textContent = 'html{scroll-behavior:auto!important;scrollbar-width:none}*::-webkit-scrollbar{width:0;height:0;display:none}';
+          d.head.appendChild(s);
+          d.scrollingElement.scrollTop = 0;
+          f._hold = performance.now() + 900; // pause on the title before scrolling
+        } catch (e) { /* cross-origin */ }
+      }, { once: true });
+      f.src = f.dataset.src;
+    }
+  }
+  startFrameScroll();
+}
+
+document.querySelectorAll('.js-open-panel').forEach((btn) => {
+  btn.addEventListener('click', () => openPanel(btn.dataset.panel));
+});
+document.querySelectorAll('.js-close-panel').forEach((btn) => {
+  btn.addEventListener('click', () => closePanels());
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePanels();
+});
+// the logo returns you from a page to the experience
+document.querySelector('.js-home')?.addEventListener('click', () => closePanels());
+
+// ---- header Download → close any page, then glide to the eclipse + downloads
 document.querySelector('.js-download').addEventListener('click', () => {
+  closePanels();
   const max = document.documentElement.scrollHeight - window.innerHeight;
   lenis.scrollTo(max, { duration: 3.2 });
 });
