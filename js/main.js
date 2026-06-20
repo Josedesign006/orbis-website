@@ -1112,7 +1112,7 @@ function frameScrollStep() {
       if (f._hold && now < f._hold) continue;           // dwell at the ends
       f._hold = 0;
       if (el.scrollTop >= max - 1) { el.scrollTop = 0; f._hold = now + 1100; continue; } // loop
-      el.scrollTop = Math.min(max, el.scrollTop + 0.9); // ~54px/s — visibly playing, still calm
+      el.scrollTop = Math.min(max, el.scrollTop + 0.7); // ~42px/s — gentle, visibly playing
     } catch (e) { /* iframe not ready */ }
   }
   frameRAF = requestAnimationFrame(frameScrollStep);
